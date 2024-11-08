@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Добавление юзера</title>
+</head>
+<body>
+
+<form method="POST" action="/admin/add">
+    <label for="nick">Ник:</label>
+    <input name="nick" type="text" id="nick"/><br>
+
+    <label for="first_name">Имя юзера:</label>
+    <input name="f_n" type="text" id="first_name"/><br>
+
+    <label for="last_name">Фамилия юзера:</label>
+    <input name="l_n" type="text" id="last_name"/><br>
+
+    <label for="e_mail">Почта:</label>
+    <input name="e_m" type="text" id="e_mail"/><br>
+
+    <label for="user_pswd">Пароль:</label>
+    <input name="u_pswd" type="text" id="user_pswd"/><br>
+
+    <select  name="role_from_post">
+        <option th:each="role : ${roles___}" th:value="${role}" th:text="${role}">
+        </option>
+    </select><br>
+
+    <input type="submit" value="Добавить"><br><br><br>
+
+    <form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="post">
+        <h3><input type="submit" value="Log out" /></h3>
+    </form>
+
+</form>
+
+</body>
+</html>

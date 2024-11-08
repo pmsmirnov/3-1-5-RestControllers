@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Редактирование юзера</title>
+</head>
+<body>
+<table style="border-collapse: collapse;">
+    <tr>
+        <td style="border: 1px solid black;" th:text="${user_.nickName}   "></td>
+        <td style="border: 1px solid black;" th:text="${user_.firstName}   "></td>
+        <td style="border: 1px solid black;" th:text="   ${user_.lastName}   "></td>
+        <td style="border: 1px solid black;" th:text="   ${user_.eMail}   "></td>
+        <td style="border: 1px solid black;" th:text="   ${user_.pass}   "></td>
+
+        <td><table style="border-collapse: collapse;">
+            <tr th:each="role : ${user_.roles}">
+                <td style="border: 1px solid black;" th:text="   ${role.roleName}   "></td>
+            </tr>
+        </table></td>
+    </tr>
+</table><br><br><br>
+
+<form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="post">
+    <h3><input type="submit" value="Log out" /></h3>
+</form>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Редактирование юзера</title>
+</head>
+<body>
+<table style="border-collapse: collapse;">
+    <tr>
+        <td style="border: 1px solid black;" th:text="${user_.nickName}   "></td>
+        <td style="border: 1px solid black;" th:text="${user_.firstName}   "></td>
+        <td style="border: 1px solid black;" th:text="   ${user_.lastName}   "></td>
+        <td style="border: 1px solid black;" th:text="   ${user_.eMail}   "></td>
+        <td style="border: 1px solid black;" th:text="   ${user_.pass}   "></td>
+        <td><table style="border-collapse: collapse;">
+            <tr th:each="role : ${user_.roles}">
+                <td style="border: 1px solid black;" th:text="   ${role.roleName}   "></td>
+            </tr>
+        </table></td>
+    </tr>
+</table>
+<form th:method="POST" action="/admin/edit" th:object="${user_}">
+    <input type="hidden" name="id_user" th:value="*{id}">
+    <label for="fName">Ник юзера:</label>
+    <input type="text" id="NickName" name="nick" th:value="*{nickName}"><br>
+    <label for="fName">Имя юзера:</label>
+    <input type="text" id="fName" name="f_n" th:value="*{firstName}"><br>
+    <label for="lName">Фамилия юзера:</label>
+    <input type="text" id="lName" name="l_n" th:value="*{lastName}"><br>
+    <label for="eMail">Почта юзера:</label>
+    <input type="text"  id="eMail" name="e_m" th:value="*{eMail}"><br>
+    <label for="eMail">Пароль юзера:</label>
+    <input type="text" id="password" name="pswrd" th:value="*{pass}"><br>
+    <select  name="role_from_post">
+        <option th:each="role : ${roles_}" th:value="${role}" th:text="${role}">
+        </option>
+    </select><br>
+    <input type="submit" value="Изменить">
+</form><br><br><br>
+
+<form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="post">
+    <h3><input type="submit" value="Log out" /></h3>
+</form>
+
+</body>
+</html>

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hello</title>
+</head>
+<body>
+
+<a href="/admin">Переход на страницу всех юзеров</a><br><br><br>
+<a href="/user">Переход на свою страницу</a><br><br><br>
+
+<form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="post">
+    <h3><input type="submit" value="Log out" /></h3>
+</form>
+
+
+</body>
+</html>
