@@ -1,21 +1,22 @@
 package ru.pmsmirnov.springsecurity.securityApp.services;
 
-import ru.pmsmirnov.springsecurity.securityApp.models.CrudUser;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import ru.pmsmirnov.springsecurity.securityApp.models.User;
 
 
 import java.util.List;
 
-public interface UserService {
-    void add(CrudUser user);
+public interface UserService extends UserDetailsService {
+    void add(User user);
 
-    List<CrudUser> listUsers();
+    List<User> listUsers();
 
-    CrudUser getUserById(int id);
+    User getUserById(int id);
 
-    void update(CrudUser user);
+    void update(User user);
 
-    void deleteUser(CrudUser user);
+    void deleteUser(User user);
 
-    CrudUser getCrudUserByName(String nick);
+    User getCrudUserByName(String nick);
 
 }

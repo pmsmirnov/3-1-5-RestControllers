@@ -7,7 +7,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "crud_role")
-public class CrudRole implements GrantedAuthority {
+public class Role implements GrantedAuthority {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,7 +16,7 @@ public class CrudRole implements GrantedAuthority {
     private String roleName;
 
     @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
-    private Set<CrudUser> users;
+    private Set<User> users;
 
     @Override
     public String getAuthority() {
@@ -39,11 +39,11 @@ public class CrudRole implements GrantedAuthority {
         this.roleName = name;
     }
 
-    public Set<CrudUser> getUsers() {
+    public Set<User> getUsers() {
         return users;
     }
 
-    public void setUsers(Set<CrudUser> users) {
+    public void setUsers(Set<User> users) {
         this.users = users;
     }
 }

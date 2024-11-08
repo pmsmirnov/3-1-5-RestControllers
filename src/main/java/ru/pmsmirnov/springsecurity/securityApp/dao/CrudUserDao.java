@@ -1,6 +1,7 @@
 package ru.pmsmirnov.springsecurity.securityApp.dao;
 
-import ru.pmsmirnov.springsecurity.securityApp.models.CrudUser;
+import org.springframework.data.jpa.repository.Query;
+import ru.pmsmirnov.springsecurity.securityApp.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -9,17 +10,17 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface CrudUserDao extends JpaRepository<CrudUser, Integer> {
+public interface CrudUserDao extends JpaRepository<User, Integer> {
 
-    Optional<CrudUser> findByNickName(String nick);
+    Optional<User> findByNickName(String nick);
 
-    List<CrudUser> findAll();
+    List<User> findAll();
 
-    CrudUser save (CrudUser entity);
+    User save (User entity);
 
-    Optional<CrudUser> findById(int id);
+    Optional<User> findById(int id);
 
     @Override
-    void delete(CrudUser entity);
+    void delete(User entity);
 
 }

@@ -1,11 +1,11 @@
 package ru.pmsmirnov.springsecurity.securityApp.services;
 
-import ru.pmsmirnov.springsecurity.securityApp.models.CrudRole;
+import ru.pmsmirnov.springsecurity.securityApp.models.Role;
 import java.util.List;
 
 public interface RoleService {
 
-    List<CrudRole> listRoles();
+    List<Role> listRoles();
 
-    CrudRole getRoleByName(String roleName);
+    Role getRoleByName(String roleName);
 }

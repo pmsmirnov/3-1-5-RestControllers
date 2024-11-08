@@ -1,10 +1,9 @@
 package ru.pmsmirnov.springsecurity.securityApp.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.pmsmirnov.springsecurity.securityApp.dao.CrudRoleDao;
-import ru.pmsmirnov.springsecurity.securityApp.models.CrudRole;
+import ru.pmsmirnov.springsecurity.securityApp.models.Role;
 
 import java.util.List;
 
@@ -12,18 +11,18 @@ import java.util.List;
 public class RoleServiceImpl implements RoleService {
 
     private final CrudRoleDao roleDao;
-    @Autowired
+
     public RoleServiceImpl(CrudRoleDao role) {
         this.roleDao = role;
     }
 
-    @Transactional
-    public List<CrudRole> listRoles() {
+    @Transactional(readOnly = true)
+    public List<Role> listRoles() {
         return roleDao.findAll();
     }
 
-    @Transactional
-    public CrudRole getRoleByName(String roleName) {
+    @Transactional(readOnly = true)
+    public Role getRoleByName(String roleName) {
         return roleDao.findByRoleName(roleName);
     }
 

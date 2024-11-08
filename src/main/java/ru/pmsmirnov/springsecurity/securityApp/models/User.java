@@ -3,12 +3,15 @@ package ru.pmsmirnov.springsecurity.securityApp.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
 import java.util.Set;
 
 @Entity
 @Table(name = "crud_users")
-public class CrudUser {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,23 +35,34 @@ public class CrudUser {
     @Column(name = "Mail")
     private String eMail;
 
-    @Column(name = "pswd")
-    private String pass;
+    @Column(name = "passwd")
+    private String passwd;
 
     @ManyToMany (fetch = FetchType.EAGER)
-    private Set<CrudRole> roles;
+    private Set<Role> roles;
 
-    public CrudUser () {
+//    @Transient
+//    private String roleFromForm;
+
+    public User() {
     }
 
-    public CrudUser(int id, String nickName, String firstName, String lastName, String eMail, String p, Set<CrudRole> r) {
+    public User(int id, String nickName, String firstName, String lastName,
+                String eMail, String passwd, Set<Role> roles) {
         this.id = id;
         this.nickName = nickName;
         this.firstName = firstName;
         this.lastName = lastName;
         this.eMail = eMail;
-        this.pass = p;
-        this.roles = r;
+        this.passwd = passwd;
+        this.roles = roles;
+    }
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return getRoles();
+    }
+    public Set<Role> getRoles() {
+        return roles;
     }
 
     public int getId() {
@@ -75,7 +89,7 @@ public class CrudUser {
         this.lastName = lastName;
     }
 
-    public String getNickName() {
+    public String getUsername() {
         return nickName;
     }
 
@@ -91,19 +105,24 @@ public class CrudUser {
         this.eMail = eMail;
     }
 
-    public String getPass() {
-        return pass;
+    public String getPassword() {
+        return passwd;
     }
 
-    public void setPass(String password) {
-        this.pass = password;
+    public void setPasswd(String password) {
+        this.passwd = password;
     }
 
-    public Set<CrudRole> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<CrudRole> roles) {
+    public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
+
+
+//    public String getRoleFromForm() {
+//        return roleFromForm;
+//    }
+//
+//    public void setRoleFromForm(String roleFromForm) {
+//        this.roleFromForm = roleFromForm;
+//    }
 }

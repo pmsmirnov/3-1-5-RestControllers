@@ -9,21 +9,21 @@
 
 <form method="POST" action="/admin/add">
     <label for="nick">Ник:</label>
-    <input name="nick" type="text" id="nick"/><br>
+    <input name="nickName" type="text" id="nick"/><br>
 
     <label for="first_name">Имя юзера:</label>
-    <input name="f_n" type="text" id="first_name"/><br>
+    <input name="firstName" type="text" id="first_name"/><br>
 
     <label for="last_name">Фамилия юзера:</label>
-    <input name="l_n" type="text" id="last_name"/><br>
+    <input name="lastName" type="text" id="last_name"/><br>
 
     <label for="e_mail">Почта:</label>
-    <input name="e_m" type="text" id="e_mail"/><br>
+    <input name="eMail" type="text" id="e_mail"/><br>
 
     <label for="user_pswd">Пароль:</label>
-    <input name="u_pswd" type="text" id="user_pswd"/><br>
+    <input name="passwd" type="text" id="user_pswd"/><br>
 
-    <select  name="role_from_post">
+    <select  name="roleFromForm">
         <option th:each="role : ${roles___}" th:value="${role}" th:text="${role}">
         </option>
     </select><br>
