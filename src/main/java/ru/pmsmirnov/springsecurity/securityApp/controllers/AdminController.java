@@ -15,6 +15,7 @@ import ru.pmsmirnov.springsecurity.securityApp.services.UserService;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Controller
@@ -53,8 +54,14 @@ public class AdminController {
     }
 
     @PostMapping(value = "/add")
-    public String add(User newUser, @RequestParam("roleFromForm") String roleFromForm) {
-        Role role = roleService.getRoleByName(roleFromForm);
+    public String add(User newUser, @RequestParam("roleFromForm") Optional<String> roleFromForm) {
+        String roleFromFormLocal;
+        if (roleFromForm.isEmpty()) {
+            roleFromFormLocal = "ROLE_USER";
+        } else {
+            roleFromFormLocal = roleFromForm.get();
+        }
+        Role role = roleService.getRoleByName(roleFromFormLocal);
         Set<Role> rolesSet = new HashSet<>();
         rolesSet.add(role);
         newUser.setRoles(rolesSet);
@@ -73,9 +80,15 @@ public class AdminController {
     }
 
     @PostMapping(value = "/edit")
-    public String edit(User editedUser, @RequestParam("roleFromForm") String roleFromForm) {
+    public String edit(User editedUser, @RequestParam("roleFromForm") Optional<String> roleFromForm) {
+        String roleFromFormLocal;
+        if (roleFromForm.isEmpty()) {
+            roleFromFormLocal = "USER";
+        } else {
+            roleFromFormLocal = roleFromForm.get();
+        }
         Set<Role> rolesSet = userService.getUserById(editedUser.getId()).getRoles();
-        Role role = roleService.getRoleByName("ROLE_" + roleFromForm);
+        Role role = roleService.getRoleByName("ROLE_" + roleFromFormLocal);
         rolesSet.add(role);
         editedUser.setRoles(rolesSet);
         editedUser.setPasswd(passwordEncoder.encode(editedUser.getPassword()));

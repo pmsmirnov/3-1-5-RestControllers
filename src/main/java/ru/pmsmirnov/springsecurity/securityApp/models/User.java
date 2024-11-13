@@ -38,7 +38,7 @@ public class User implements UserDetails {
     @Column(name = "passwd")
     private String passwd;
 
-    @ManyToMany (fetch = FetchType.EAGER)
+    @ManyToMany (fetch = FetchType.LAZY)
     private Set<Role> roles;
 
     public User() {
