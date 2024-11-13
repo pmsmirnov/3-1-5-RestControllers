@@ -1,10 +1,8 @@
 package ru.pmsmirnov.springsecurity.securityApp.dao;
 
-import org.springframework.data.jpa.repository.Query;
-import ru.pmsmirnov.springsecurity.securityApp.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
+import ru.pmsmirnov.springsecurity.securityApp.models.User;
 
 import java.util.List;
 import java.util.Optional;

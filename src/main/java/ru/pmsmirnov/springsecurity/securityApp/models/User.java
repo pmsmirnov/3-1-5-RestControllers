@@ -41,9 +41,6 @@ public class User implements UserDetails {
     @ManyToMany (fetch = FetchType.EAGER)
     private Set<Role> roles;
 
-//    @Transient
-//    private String roleFromForm;
-
     public User() {
     }
 
@@ -117,12 +114,15 @@ public class User implements UserDetails {
         this.roles = roles;
     }
 
-
-//    public String getRoleFromForm() {
-//        return roleFromForm;
-//    }
-//
-//    public void setRoleFromForm(String roleFromForm) {
-//        this.roleFromForm = roleFromForm;
-//    }
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", nickName='" + nickName + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", eMail='" + eMail + '\'' +
+                ", passwd='" + passwd + '\'' +
+                '}';
+    }
 }

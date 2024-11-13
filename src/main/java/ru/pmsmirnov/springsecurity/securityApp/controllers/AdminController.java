@@ -75,7 +75,7 @@ public class AdminController {
     @PostMapping(value = "/edit")
     public String edit(User editedUser, @RequestParam("roleFromForm") String roleFromForm) {
         Set<Role> rolesSet = userService.getUserById(editedUser.getId()).getRoles();
-        Role role = roleService.getRoleByName(roleFromForm);
+        Role role = roleService.getRoleByName("ROLE_" + roleFromForm);
         rolesSet.add(role);
         editedUser.setRoles(rolesSet);
         editedUser.setPasswd(passwordEncoder.encode(editedUser.getPassword()));
@@ -83,8 +83,14 @@ public class AdminController {
         return "redirect:/admin";
     }
 
+    @PostMapping(value = "/delete")
+    public String editPost(@RequestParam(value = "userId") int uId) {
+        userService.deleteUser(userService.getUserById(uId));
+        return "redirect:/admin";
+    }
+
     @GetMapping(value = "/delete")
-    public String editPage(@RequestParam(value = "userId") int uId) {
+    public String editGet(@RequestParam(value = "userId") int uId) {
         userService.deleteUser(userService.getUserById(uId));
         return "redirect:/admin";
     }
