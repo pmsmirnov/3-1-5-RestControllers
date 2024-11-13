@@ -24,6 +24,8 @@ public class SecurityConfiguration {
     public AuthenticationSuccessHandler authSuccessHandler() {
         return new SuccessUserHandler();
     }
+
+    
     @Bean
     public UserDetailsService userService() {
         return new UserServiceImpl();
