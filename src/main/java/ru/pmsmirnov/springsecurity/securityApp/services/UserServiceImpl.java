@@ -1,5 +1,6 @@
 package ru.pmsmirnov.springsecurity.securityApp.services;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -41,6 +42,8 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     @Override
     public List<User> listUsers() {
+        List<User> userList = userDao.findAll();
+        userList.stream().forEach(x -> Hibernate.initialize(x.getRoles()));
         return userDao.findAll();
     }
 
