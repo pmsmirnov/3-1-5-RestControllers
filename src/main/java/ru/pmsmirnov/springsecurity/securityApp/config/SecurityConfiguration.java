@@ -1,5 +1,7 @@
 package ru.pmsmirnov.springsecurity.securityApp.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -13,28 +15,29 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import ru.pmsmirnov.springsecurity.securityApp.services.UserServiceImpl;
 
 @EnableWebSecurity
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfiguration {
 
+    private final UserDetailsService userDetailsService;
+
+    @Autowired
+    public SecurityConfiguration(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
+
     @Bean
     public AuthenticationSuccessHandler authSuccessHandler() {
         return new SuccessUserHandler();
     }
 
-    
-    @Bean
-    public UserDetailsService userService() {
-        return new UserServiceImpl();
-    }
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userService());
+        provider.setUserDetailsService(userDetailsService);
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }

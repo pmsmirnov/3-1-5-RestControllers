@@ -14,12 +14,10 @@ import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
-    private CrudUserDao userDao;
-
-    public UserServiceImpl() {    }
+    private final CrudUserDao userDao;
 
     @Autowired
-    public void setUserDao(CrudUserDao userDao) {
+    public UserServiceImpl(CrudUserDao userDao) {
         this.userDao = userDao;
     }
 
