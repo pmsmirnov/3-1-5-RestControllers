@@ -16,10 +16,9 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
         <div class="col-auto me-auto">
-            <span class="navbar-brand mx-0 mb-0 h1" sec:authentication="name"></span>
+            <span id="name" class="navbar-brand mx-0 mb-0 h1"></span>
             <span class="navbar-brand mx-0">with roles: </span>
-            <span class="navbar-brand mx-0" th:each="role : ${#authentication.principal.authorities}"
-                  th:text="${role.trimName} + ' '"></span>
+            <span id="roles" class="navbar-brand mx-0"></span>
         </div>
         <div class="col-auto">
             <div class="navbar-text">
@@ -126,28 +125,84 @@
                             <input name="passwd" id="password" type="password" class="form-control">
                         </div>
                         <div class="col-6 mb-3 mx-4">
-                            <label for="roles" class="form-label mb-0 fw-bold">Роли</label>
-                            <select name="roleFromForm" id="roles" class="form-select" size="2">
+                            <label for="rolesEdit" class="form-label mb-0 fw-bold">Роли</label>
+                            <select name="roleFromForm" id="rolesEdit" class="form-select" size="2">
                             </select>
                         </div>
                     </div>
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" id="universalButton"></button>
+                        <button type="button" class="btn btn-primary" id="editButton">Edit</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
+<div class="modal" id="deleteModalTemplate" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit user</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="deleteForm" action="#" enctype="multipart/form-data" novalidate>
+                    <div class="row text-center justify-content-center">
+                        <div class="col-6 mb-3 mx-4">
+                            <label for="userIdDel" class="form-label mb-0 fw-bold">ID</label>
+                            <input name="id" id="userIdDel" type="text" class="form-control"
+                                   style="background: lightgray;" readonly>
+                        </div>
+                        <br>
+                        <div class="col-6 mb-3 mx-4">
+                            <label for="nickNameDel" class="form-label mb-0 fw-bold">Ник</label>
+                            <input name="nickName" id="nickNameDel" type="text" class="form-control"
+                                   style="background: lightgray;" readonly>
+                        </div>
+                        <div class="col-6 mb-3 mx-4">
+                            <label for="firstNameDel" class="form-label mb-0 fw-bold">Имя</label>
+                            <input name="firstName" id="firstNameDel" type="text" class="form-control"
+                                   style="background: lightgray;" readonly>
+                        </div>
+                        <div class="col-6 mb-3 mx-4">
+                            <label for="lastNameDel" class="form-label mb-0 fw-bold">Фимилия</label>
+                            <input name="lastName" id="lastNameDel" type="text" class="form-control"
+                                   style="background: lightgray;" readonly>
+                        </div>
+                        <div class="col-6 mb-3 mx-4">
+                            <label for="eMailDel" class="form-label mb-0 fw-bold">Email address</label>
+                            <input name="eMail" id="eMailDel" type="email" class="form-control" autocomplete="off"
+                                   style="background: lightgray;" readonly>
+                        </div>
+                        <div class="col-6 mb-3 mx-4">
+                            <label for="rolesDel" class="form-label mb-0 fw-bold">Роли</label>
+                            <select name="roleFromForm" id="rolesDel" class="form-select" size="2"
+                                    style="background: lightgray;" readonly>
+                                <option></option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger" id="deleteButton">Delete</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <button id="btn-edit" class="btn btn-info text-white" data-id="113">Edit</button>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
 <script type='text/javascript'>
 
-    updateTable()
+    updateTableAndNav()
 
     async function getUsers() {
         const response = await fetch('/api/users', {
@@ -179,13 +234,22 @@
         editModal.addEventListener('show.bs.modal', event => {
             const button = event.relatedTarget
             const id = button.getAttribute('data-id')
-            const action = button.getAttribute('data-action')
             const promiseUserDTO = getUser(id)
-            editingModal(promiseUserDTO, action)
+            editingEditModal(promiseUserDTO)
         })
     }
 
-    async function updateTable() {
+    const deleteModal = document.getElementById('deleteModalTemplate');
+    if (deleteModal) {
+        deleteModal.addEventListener('show.bs.modal', event => {
+            const button = event.relatedTarget
+            const id = button.getAttribute('data-id')
+            const promiseUserDTO = getUser(id)
+            editingDeleteModal(promiseUserDTO)
+        })
+    }
+
+    async function updateTableAndNav() {
         let tBody = document.querySelector('#usersTbody');
         while (tBody.rows.length) {
             tBody.deleteRow(0);
@@ -242,7 +306,7 @@
                 buttonDel.setAttribute('type', "button")
                 buttonDel.setAttribute('data-id', user.id)
                 buttonDel.setAttribute("data-bs-toggle", "modal")
-                buttonDel.setAttribute('data-bs-target', "#editModalTemplate")
+                buttonDel.setAttribute('data-bs-target', "#deleteModalTemplate")
                 buttonDel.setAttribute('data-action', "delete")
                 buttonDel.textContent = "Delete"
                 cellDel.appendChild(buttonDel)
@@ -250,87 +314,93 @@
             })
         })
 
+        let authUser = await fetch('/api/userself', {
+            method: 'post',
+            credentials: 'include',
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            },
+        }).then(response => response.json())
+        let spanName = document.querySelector('#name');
+        let spanRoles = document.querySelector('#roles');
+        let rolesText = ""
+        authUser.rolesList.forEach(role => rolesText = rolesText + " " + role)
+        spanName.textContent = authUser.nick
+        spanRoles.textContent = rolesText
+
     }
 
-    async function editingModal(promiseUser, action) {
-        console.log(promiseUser)
+    async function editingDeleteModal(promiseUser) {
         promiseUser.then(async u => {
             const user = await u
 
-            const modalInputId = editModal.querySelector('#userId')
-            modalInputId.value = user.id
+            const delModalInputId = deleteModal.querySelector('#userIdDel')
+            delModalInputId.value = user.id
 
-            const modalInputNickname = editModal.querySelector('#nickName')
-            modalInputNickname.value = user.nick
+            const delModalInputNickname = deleteModal.querySelector('#nickNameDel')
+            delModalInputNickname.value = user.nick
 
-            const modalInputFirstName = editModal.querySelector('#firstName')
-            modalInputFirstName.value = user.firstName
+            const delModalInputFirstName = deleteModal.querySelector('#firstNameDel')
+            delModalInputFirstName.value = user.firstName
 
-            const modalInputLastName = editModal.querySelector('#lastName')
-            modalInputLastName.value = user.lastName
+            const delModalInputLastName = deleteModal.querySelector('#lastNameDel')
+            delModalInputLastName.value = user.lastName
 
-            const modalInputeMail = editModal.querySelector('#eMail')
-            modalInputeMail.value = user.eMail
+            const delModalInputeMail = deleteModal.querySelector('#eMailDel')
+            delModalInputeMail.value = user.eMail
 
-            const inpPassword = editModal.querySelector('#divPassword')
-            const actionButton = editModal.querySelector('#universalButton')
+            const deleteButton = deleteModal.querySelector('#deleteButton')
 
-            let select = editModal.querySelector('#roles');
-            if (action === 'delete') {
-                editModal.querySelector('.modal-title').textContent = "Delete user"
-                actionButton.textContent = "Delete"
-                if (!inpPassword.hasAttribute('hidden')) {
-                    inpPassword.setAttribute('hidden', '');
+            const delMSelectRoles = deleteModal.querySelector('#rolesDel')
+            delMSelectRoles.options.length = 0
+            user.rolesList.forEach(r => delMSelectRoles.add(new Option(r, r)))
+
+            deleteButton.onclick = function () {
+
+                const jsonDTO = {
+                    "id": user.id,
+                    "nick": user.nick,
+                    "firstName": user.firstName,
+                    "lastName": user.lastName,
+                    "eMail": user.eMail,
+                    "rolesList": user.rolesList,
+                    "password": "password"
                 }
-                if (actionButton.classList.contains('btn-primary')) {
-                    actionButton.classList.remove('btn-primary');
-                    actionButton.classList.add('btn-danger');
-                    actionButton.textContent = 'Delete'
-                }
-                actionButton.onclick = function () {
-
-                    const jsonDTO = {
-                        "id" : user.id,
-                        "nick" : user.nick,
-                        "firstName" : user.firstName,
-                        "lastName" : user.lastName,
-                        "eMail" : user.eMail,
-                        "rolesList" : user.rolesList,
-                        "password" : "password"
-                    }
-                    fetch('/api/delete', {
-                        method: 'post',
-                        credentials: 'include',
-                        headers: {
-                            "Content-type": "application/json; charset=UTF-8"
-                        },
-                        body: JSON.stringify(jsonDTO)
-                    }).then(bootstrap.Modal.getInstance(editModal).hide())
-                        .then(() => updateTable())
-                        .catch(function (error) {
+                fetch('/api/delete', {
+                    method: 'post',
+                    credentials: 'include',
+                    headers: {
+                        "Content-type": "application/json; charset=UTF-8"
+                    },
+                    body: JSON.stringify(jsonDTO)
+                }).then(bootstrap.Modal.getInstance(deleteModal).hide())
+                    .then(() => updateTableAndNav())
+                    .catch(function (error) {
                         console.log('Request failed', error);
                     });
 
-                }
-                modalInputNickname.readOnly = true
-                modalInputNickname.style.backgroundColor = 'lightgrey'
-                modalInputFirstName.readOnly = true
-                modalInputFirstName.style.backgroundColor = 'lightgrey'
-                modalInputLastName.readOnly = true
-                modalInputLastName.style.backgroundColor = 'lightgrey'
-                modalInputeMail.readOnly = true
-                modalInputeMail.style.backgroundColor = 'lightgrey'
-                const selectRoles = editModal.querySelector('#roles')
-                selectRoles.options.length = 0
-                user.rolesList.forEach(r => selectRoles.add(new Option(r, r)))
-                selectRoles.readOnly = true
-                selectRoles.style.backgroundColor = 'lightgrey'
-                if (!inpPassword.hasAttribute('hidden')) {
-                    inpPassword.setAttribute('hidden', '');
-                }
-            } else {
-                editModal.querySelector('.modal-title').textContent = "Edit user"
-                actionButton.textContent = "Edit"
+            }
+        })
+    }
+
+    const editModalInputId = editModal.querySelector('#userId')
+    const editModalInputNickname = editModal.querySelector('#nickName')
+    const editModalInputFirstName = editModal.querySelector('#firstName')
+    const editModalInputLastName = editModal.querySelector('#lastName')
+    const editModalInputeMail = editModal.querySelector('#eMail')
+    const editMSelectRoles = editModal.querySelector('#rolesEdit')
+
+    async function editingEditModal(promiseUser) {
+        promiseUser.then(async u => {
+            const user = await u
+
+            editModalInputId.value = user.id
+            editModalInputNickname.value = user.nick
+            editModalInputFirstName.value = user.firstName
+            editModalInputLastName.value = user.lastName
+            editModalInputeMail.value = user.eMail
+        })
+            .then(async () => {
                 fetch('/api/roles', {
                     method: 'post',
                     credentials: 'include',
@@ -340,10 +410,10 @@
                 })
                     .then((response) => response.json())
                     .then(function (data) {
-                        select.options.length = 0
+                        const editMSelectRoles = editModal.querySelector('#rolesEdit')
+                        editMSelectRoles.options.length = 0
                         for (let i = 0; i < data.length; i++) {
-                            // POPULATE SELECT ELEMENT WITH JSON.
-                            select.innerHTML = select.innerHTML +
+                            editMSelectRoles.innerHTML = editMSelectRoles.innerHTML +
                                 '<option value="' + data[i]['trimName'] + '">' + data[i]['trimName'] + '</option>';
                         }
 
@@ -352,32 +422,26 @@
                         console.log('Request failed', error);
                     });
 
-                if (inpPassword.hasAttribute('hidden')) {
-                    inpPassword.removeAttribute('hidden')
-                }
-                if (actionButton.classList.contains('btn-danger')) {
-                    actionButton.classList.remove('btn-danger');
-                    actionButton.classList.add('btn-primary');
-                    actionButton.textContent = "Edit"
-                }
-                actionButton.onclick = function () {
+                const editButton = editModal.querySelector('#editButton')
+                editButton.onclick = function () {
 
-                    const s = select.value
-                    if(s === undefined) {
-                        select.value = "USER"
+                    const s = editMSelectRoles.value
+                    if (s == undefined) {
+                        editMSelectRoles.value = "USER"
                     }
-                    const p = inpPassword.value
-                    if(p === undefined) {
-                        inpPassword.value = "password"
+                    const editMPassword = editModal.querySelector('#password')
+                    const p = editMPassword.value
+                    if (p == undefined) {
+                        editMPassword.value = "password"
                     }
                     const jsonDTO = {
-                        "id" : modalInputId.value,
-                        "nick" : modalInputNickname.value,
-                        "firstName" : modalInputFirstName.value,
-                        "lastName" : modalInputLastName.value,
-                        "eMail" : modalInputeMail.value,
-                        "rolesList" : [select.value],
-                        "password" : inpPassword.value
+                        "id": editModalInputId.value,
+                        "nick": editModalInputNickname.value,
+                        "firstName": editModalInputFirstName.value,
+                        "lastName": editModalInputLastName.value,
+                        "eMail": editModalInputeMail.value,
+                        "rolesList": [editMSelectRoles.value],
+                        "password": editMPassword .value
                     }
                     fetch('/api/edit', {
                         method: 'post',
@@ -387,17 +451,15 @@
                         },
                         body: JSON.stringify(jsonDTO)
                     }).then(bootstrap.Modal.getInstance(editModal).hide())
-                        .then(() => updateTable())
+                        .then(() => updateTableAndNav())
                         .catch(function (error) {
                             console.log('Request failed', error);
                         });
 
                 }
-            }
-
-
-        })
+            })
     }
+
 </script>
 
 </body>

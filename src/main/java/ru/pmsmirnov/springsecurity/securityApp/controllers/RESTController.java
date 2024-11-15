@@ -1,5 +1,8 @@
 package ru.pmsmirnov.springsecurity.securityApp.controllers;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import ru.pmsmirnov.springsecurity.securityApp.dto.UserDTO;
@@ -79,5 +82,14 @@ public class RESTController {
         userService.deleteUser(deletedUser);
     }
 
+    @ResponseBody
+    @PostMapping(value = "/userself", produces = "application/json")
+    public UserDTO userSelf() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails =  (UserDetails)auth.getPrincipal();
+        String userName = userDetails.getUsername();
+        User user = userService.getCrudUserByName(userName);
+        return new UserDTO(user);
+    }
 
 }

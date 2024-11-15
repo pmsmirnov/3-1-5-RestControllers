@@ -16,10 +16,9 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
         <div class="col-auto me-auto">
-            <span class="navbar-brand mx-0 mb-0 h1" sec:authentication="name"></span>
+            <span id="name" class="navbar-brand mx-0 mb-0 h1"></span>
             <span class="navbar-brand mx-0">with roles: </span>
-            <span class="navbar-brand mx-0" th:each="role : ${#authentication.principal.authorities}"
-                  th:text="${role.trimName} + ' '"></span>
+            <span id="roles" class="navbar-brand mx-0"></span>
         </div>
         <div class="col-auto">
             <div class="navbar-text">
@@ -65,21 +64,9 @@
                                 <th scope="col">Role</th>
                             </tr>
                             </thead>
-                            <tr>
-                                <td class="align-middle" th:text="   ${user_.id}   "></td>
-                                <td class="align-middle" th:text="${user_.username}   "></td>
-                                <td class="align-middle" th:text="${user_.firstName}   "></td>
-                                <td class="align-middle" th:text="   ${user_.lastName}   "></td>
-                                <td class="align-middle" th:text="   ${user_.eMail}   "></td>
-                                <td class="align-middle">
-                            <span th:each="role : ${user_.roles}" th:text="${role.trimName} + ' '">
-                            </span>
-                                </td>
-                                <td class="align-middle">
-                                </td>
-                                <td class="align-middle">
-                                </td>
-                            </tr>
+                            <tbody id="userTbody">
+
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -87,8 +74,64 @@
         </div>
     </div>
 </div>
-<script>
+<script type='text/javascript'>
 
+
+    updateTableAndNav()
+
+    async function updateTableAndNav() {
+        let tBody = document.querySelector('#userTbody');
+        while (tBody.rows.length) {
+            tBody.deleteRow(0);
+        }
+        let user = await fetch('/api/userself', {
+            method: 'post',
+            credentials: 'include',
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            },
+        }).then(response => response.json())
+
+        let row = tBody.insertRow()
+
+        let cellId = row.insertCell()
+        cellId.textContent = user.id
+        cellId.classList.add('align-middle')
+        cellId.id = user.id
+
+        let cellNick = row.insertCell()
+        cellNick.textContent = user.nick
+        cellNick.classList.add('align-middle')
+        cellNick.id = user.nick
+
+        let cellFirstName = row.insertCell()
+        cellFirstName.textContent = user.firstName
+        cellFirstName.classList.add('align-middle')
+        cellFirstName.id = user.firstName
+
+        let cellLastName = row.insertCell()
+        cellLastName.textContent = user.lastName
+        cellLastName.classList.add('align-middle')
+        cellLastName.id = user.lastName
+
+        let celleMail = row.insertCell()
+        celleMail.textContent = user.eMail
+        celleMail.classList.add('align-middle')
+        celleMail.id = user.eMail
+
+        let cellRoles = row.insertCell()
+        let rolesText = ""
+        user.rolesList.forEach(role => rolesText = rolesText + " " + role)
+        cellRoles.textContent = rolesText
+        cellRoles.classList.add('align-middle')
+        cellRoles.id = "roles"
+
+        let spanName = document.querySelector('#name');
+        let spanRoles = document.querySelector('#roles');
+        spanName.textContent = user.nick
+        spanRoles.textContent = rolesText
+
+    }
 </script>
 </body>
 </html>
