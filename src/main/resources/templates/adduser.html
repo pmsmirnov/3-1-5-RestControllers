@@ -64,7 +64,7 @@
                     <div class="bg-warning">
                         <div class="bg-white py-4 px-4">
 
-                            <form method="POST" id="addForm" action="/admin/add" enctype="multipart/form-data"
+                            <form id="addForm" enctype="multipart/form-data"
                                   novalidate>
                                 <div class="row text-center justify-content-center">
                                     <div class="col-6 mb-3 mx-4">
@@ -95,12 +95,11 @@
                                     <div class="col-6 mb-3 mx-4">
                                         <label for="roles" class="form-label mb-0 fw-bold">Роль:</label><br>
                                         <select name="roleFromForm" id="roles" class="form-select" size="2">
-                                            <option th:each="role : ${roles___}" th:value="${role}"
-                                                    th:text="${role}"></option>
+
                                         </select>
                                     </div>
                                     <div class="col-6 mb-3 mx-4">
-                                        <input type="submit" value="Добавить" class="btn btn-success">
+                                        <input id="addButton" type="button" value="Добавить" class="btn btn-success">
                                     </div>
                                 </div>
                             </form>
@@ -118,8 +117,72 @@
         crossorigin="anonymous"></script>
 
 <script>
-// по хорошему здесь надо написать скрипт, который считывает опции выпадающего списка и у одной из них устанавливает selected.
-// Иначе если ничего не выбрать появляется ошибка.
+    const addForm = document.getElementById('addForm');
+    const addButton = addForm.querySelector('#addButton')
+    const inputNick = addForm.querySelector('#nick')
+    const inputFirstName = addForm.querySelector('#first_name')
+    const inputLastName = addForm.querySelector('#last_name')
+    const inputMail = addForm.querySelector('#e_mail')
+    const inputPassword = addForm.querySelector('#user_pswd')
+    const selectRole = addForm.querySelector('#roles')
+
+    fetch('/api/roles', {
+        method: 'post',
+        credentials: 'include',
+        headers: {
+            "Content-type": "application/x-www-form-urlencoded; charset=UTF-8"
+        },
+    })
+        .then((response) => response.json())
+        .then(function (data) {
+            selectRole.options.length = 0
+            for (let i = 0; i < data.length; i++) {
+                selectRole.innerHTML = selectRole.innerHTML +
+                    '<option value="' + data[i]['trimName'] + '">' + data[i]['trimName'] + '</option>';
+            }
+
+        })
+        .catch(function (error) {
+            console.log('Request failed', error);
+        });
+
+    addButton.onclick = function () {
+
+        if(selectRole.value === null || selectRole.value === "") {
+            selectRole.value = "USER"
+        }
+        const p = inputPassword.value
+        if(p === undefined || p === "") {
+            inputPassword.value = "password"
+        }
+
+        const jsonDTO = {
+            "id" : 0,
+            "nick" : inputNick.value,
+            "firstName" : inputFirstName.value,
+            "lastName" : inputLastName.value,
+            "eMail" : inputMail.value,
+            "rolesList" : [selectRole.value],
+            "password" : inputPassword.value
+        }
+
+        fetch('/api/adduser', {
+            method: 'post',
+            credentials: 'include',
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            },
+            body: JSON.stringify(jsonDTO)
+        })
+            .then(response => {
+                if (response.ok) window.location.href = 'http://localhost:8080/admin';
+            })
+            .catch(function (error) {
+                console.log('Request failed', error);
+            });
+
+    }
+
 </script>
 
 </body>

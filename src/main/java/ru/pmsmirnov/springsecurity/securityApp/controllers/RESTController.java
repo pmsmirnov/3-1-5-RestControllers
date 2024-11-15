@@ -8,7 +8,9 @@ import ru.pmsmirnov.springsecurity.securityApp.models.User;
 import ru.pmsmirnov.springsecurity.securityApp.services.RoleService;
 import ru.pmsmirnov.springsecurity.securityApp.services.UserService;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -51,7 +53,7 @@ public class RESTController {
     @PostMapping(value = "/adduser", consumes = "application/json", produces = "application/json")
     public void add(@RequestBody UserDTO userDTO) {
         Set<Role> rolesSet = userDTO.getRolesList().stream().map(r -> "ROLE_" + r)
-                .map(r -> roleService.getRoleByName(r)).collect(Collectors.toSet());
+                .map(roleService::getRoleByName).collect(Collectors.toSet());
 
         User newUser = UserDTO.userDTOToUser(userDTO, rolesSet, passwordEncoder.encode(userDTO.getPassword()));
         System.out.println(newUser);
@@ -65,7 +67,7 @@ public class RESTController {
         rolesSet.addAll(userDTO.getRolesList().stream().map(r -> "ROLE_" + r)
                 .map(roleService::getRoleByName).filter(r -> !rolesSet.contains(r)).collect(Collectors.toSet()));
         User editUser = userService.getUserById(userDTO.getId());
-        editUser = UserDTO.updateUser(userDTO, editUser, rolesSet, passwordEncoder.encode(userDTO.getPassword()));
+        UserDTO.updateUser(userDTO, editUser, rolesSet, passwordEncoder.encode(userDTO.getPassword()));
         userService.update(editUser);
     }
 
