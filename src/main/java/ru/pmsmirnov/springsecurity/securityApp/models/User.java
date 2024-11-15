@@ -1,5 +1,6 @@
 package ru.pmsmirnov.springsecurity.securityApp.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
@@ -36,6 +37,7 @@ public class User implements UserDetails {
     @Column(name = "Mail")
     private String eMail;
 
+
     @Column(name = "passwd")
     private String passwd;
 
@@ -59,6 +61,8 @@ public class User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return getRoles();
     }
+
+    @JsonIgnore
     public Set<Role> getRoles() {
         return roles;
     }
@@ -103,6 +107,7 @@ public class User implements UserDetails {
         this.eMail = eMail;
     }
 
+    @JsonIgnore
     public String getPassword() {
         return passwd;
     }
@@ -124,6 +129,7 @@ public class User implements UserDetails {
                 ", lastName='" + lastName + '\'' +
                 ", eMail='" + eMail + '\'' +
                 ", passwd='" + passwd + '\'' +
+                ", roles=" + roles +
                 '}';
     }
 }

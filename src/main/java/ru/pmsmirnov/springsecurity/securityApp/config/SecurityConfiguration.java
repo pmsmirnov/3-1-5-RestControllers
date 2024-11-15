@@ -1,7 +1,7 @@
 package ru.pmsmirnov.springsecurity.securityApp.config;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -20,6 +20,13 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfiguration {
+
+
+    @PostConstruct
+    public void init() {
+        // Код инициализации
+        System.out.println("@PostConstruct called");
+    }
 
     private final UserDetailsService userDetailsService;
 
@@ -49,7 +56,8 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> auth.requestMatchers("/").permitAll()//вход без авторизации
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/user").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/user").hasAnyRole("USER", "ADMIN", "API")
+                        .requestMatchers("/api/**").permitAll()
                         .anyRequest().authenticated())
                 .formLogin(formLogin -> formLogin.successHandler(authSuccessHandler())
                         .permitAll())

@@ -63,7 +63,7 @@
                     </div>
                     <div class="bg-warning">
                         <div class="bg-white py-4 px-4">
-                            <table class="table table-striped border-top">
+                            <table id="usersTable" class="table table-striped border-top">
                                 <thead>
                                 <tr>
                                     <th scope="col">ID</th>
@@ -76,12 +76,13 @@
                                     <th scope="col">Delete</th>
                                 </tr>
                                 </thead>
-                                <tr th:each="user : ${users___}">
-                                    <td class="align-middle" th:text="   ${user.id}   "></td>
-                                    <td class="align-middle" th:text="${user.username}   "></td>
-                                    <td class="align-middle" th:text="${user.firstName}   "></td>
-                                    <td class="align-middle" th:text="   ${user.lastName}   "></td>
-                                    <td class="align-middle" th:text="   ${user.eMail}   "></td>
+                                <tbody id="usersTbody">
+                                <tr id="userTr" th:each="user : ${users___}">
+                                    <td id="userIdInTd" class="align-middle" th:text="   ${user.id}   "></td>
+                                    <td id="nick" class="align-middle" th:text="${user.username}   "></td>
+                                    <td id="firstNameInTd" class="align-middle" th:text="${user.firstName}   "></td>
+                                    <td id="lastNameInTd" class="align-middle" th:text="   ${user.lastName}   "></td>
+                                    <td id="eMailInTd" class="align-middle" th:text="   ${user.eMail}   "></td>
                                     <td class="align-middle">
                             <span th:each="role : ${user.authorities}" th:text="${role.trimName} + ' '">
                             </span>
@@ -112,6 +113,7 @@
                                         </button>
                                     </td>
                                 </tr>
+                                </tbody>
                             </table>
                         </div>
                     </div>
@@ -179,29 +181,123 @@
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
 <script type='text/javascript'>
-    const editModal = document.getElementById('editModalTemplate')
+
+    async function getRoles() {
+        const response = await fetch('/api/roles', {
+            method: 'post',
+            credentials: 'include',
+            headers: {
+                "Content-type": "application/x-www-form-urlencoded; charset=UTF-8"
+            },
+        })
+        return await response.json();
+    }
+
+    async function getUsers() {
+        const response = await fetch('/api/users', {
+            method: 'post',
+            credentials: 'include',
+            headers: {
+                "Content-type": "application/x-www-form-urlencoded; charset=UTF-8"
+            },
+        })
+        return await response.json();
+    }
+
+    async function getUser(userId) {
+        const response = await fetch('/api/user', {
+            method: 'post',
+            credentials: 'include',
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            },
+            body: JSON.stringify({
+                "userId": userId,
+            })
+        })
+        return await response.json();
+    }
+
+    async function addUser() {
+        const response = await fetch('/api/adduser', {
+            method: 'post',
+            credentials: 'include',
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            },
+            body: JSON.stringify({
+                "id": 23,
+                "nick": "foo",
+                "firstName": "first",
+                "lastName": "second",
+                "eMail": "mail@ru",
+                "rolesList": ["ADMIN"],
+                "password": 123
+            }),
+        })
+    }
+
+    //addUser()
+    //console.log(getRoles());
+    //console.log(getUsers());
+    //console.log(getUser(66));
+
+    const editModal = document.getElementById('editModalTemplate');
     if (editModal) {
         editModal.addEventListener('show.bs.modal', event => {
-
             const button = event.relatedTarget
-
             const id = button.getAttribute('data-id')
-            const nickName = button.getAttribute('data-nickName')
-            const firstName = button.getAttribute('data-firstName')
-            const lastName = button.getAttribute('data-lastName')
-            const eMail = button.getAttribute('data-eMail')
             const action = button.getAttribute('data-action')
+            const promiseUserDTO = getUser(id)
+            openModal(promiseUserDTO, action)
+        })
+    }
 
+    async function updateTable() {
+        let tBody = document.querySelector('#usersTbody');
+        while (tBody.rows.length) {
+            tBody.deleteRow(0);
+        }
+        getUsers().then(async us => {
+            const users = await us
+            console.log(users)
+            users.forEach(us => {
+                let row = tBody.insertRow()
+                let cellId = row.insertCell()
+                cellId.textContent = us.id
+                cellId.id = us.id
+
+            })
+        })
+
+    }
+
+    updateTable()
+
+    async function openModal(promiseUser, action) {
+        console.log(promiseUser)
+        promiseUser.then(async u => {
+            const user = await u
+            //console.log(user)
+            let id = user.id
             const modalInputId = editModal.querySelector('#userId')
             modalInputId.value = id
+
+            let nick = user.nick
             const modalInputNickname = editModal.querySelector('#nickName')
-            modalInputNickname.value = nickName
+            modalInputNickname.value = nick
+
+            let firstName = user.firstName
             const modalInputFirstName = editModal.querySelector('#firstName')
             modalInputFirstName.value = firstName
+
+            let lastName = user.lastName
             const modalInputLastName = editModal.querySelector('#lastName')
             modalInputLastName.value = lastName
+
+            let mail = user.eMail
             const modalInputeMail = editModal.querySelector('#eMail')
-            modalInputeMail.value = eMail
+            modalInputeMail.value = mail
 
             const inpPassword = editModal.querySelector('#divPassword')
             const delButton = editModal.querySelector('#universalButton')
@@ -223,15 +319,13 @@
                     modalInputLastName.style.backgroundColor = 'lightgrey'
                     modalInputeMail.readOnly = true
                     modalInputeMail.style.backgroundColor = 'lightgrey'
-                    let select = editModal.querySelector('#roles')  // заглушка. По хорошему надо запросить асинхронно роли пользователя
-                    select.innerHTML = select.innerHTML +
-                        '<option value="ADMIN">ADMIN</option>'
-                    select.innerHTML = select.innerHTML +
-                        '<option value="ADMIN">USER</option>'   // заглушка. По хорошему надо запросить асинхронно роли пользователя
+                }
+                    const select = editModal.querySelector('#roles')
+                    select.options.length = 0
+                    user.rolesList.forEach(r => select.add(new Option(r, r)))
                     select.readOnly = true
                     select.style.backgroundColor = 'lightgrey'
-                }
-            } else {
+            }  else {
 
                 fetch('/api/roles', {
                     method: 'post',
@@ -243,6 +337,7 @@
                     .then((response) => response.json())
                     .then(function (data) {
                         let select = editModal.querySelector('#roles');
+                        select.options.length = 0
                         for (let i = 0; i < data.length; i++) {
                             // POPULATE SELECT ELEMENT WITH JSON.
                             select.innerHTML = select.innerHTML +
@@ -264,8 +359,121 @@
                     delForm.action = 'admin/edit?userId=' + id
                 }
             }
+
+
         })
     }
+
+    // const editModal = document.getElementById('editModalTemplate')
+    // if (editModal) {
+    //     editModal.addEventListener('show.bs.modal', event => {
+    //
+    //         const button = event.relatedTarget
+    //
+    //         const id = button.getAttribute('data-id')
+    //         const nickName = button.getAttribute('data-nickName')
+    //         const firstName = button.getAttribute('data-firstName')
+    //         const lastName = button.getAttribute('data-lastName')
+    //         const eMail = button.getAttribute('data-eMail')
+    //         const action = button.getAttribute('data-action')
+    //
+    //         const modalInputId = editModal.querySelector('#userId')
+    //         modalInputId.value = id
+    //         const modalInputNickname = editModal.querySelector('#nickName')
+    //         modalInputNickname.value = nickName
+    //         const modalInputFirstName = editModal.querySelector('#firstName')
+    //         modalInputFirstName.value = firstName
+    //         const modalInputLastName = editModal.querySelector('#lastName')
+    //         modalInputLastName.value = lastName
+    //         const modalInputeMail = editModal.querySelector('#eMail')
+    //         modalInputeMail.value = eMail
+    //
+    //         const inpPassword = editModal.querySelector('#divPassword')
+    //         const delButton = editModal.querySelector('#universalButton')
+    //         const delForm = editModal.querySelector('#editForm')
+    //         if (action == 'delete') {
+    //             if (!inpPassword.hasAttribute('hidden')) {
+    //                 inpPassword.setAttribute('hidden', '');
+    //             }
+    //             if (delButton.classList.contains('btn-primary')) {
+    //                 delButton.classList.remove('btn-primary');
+    //                 delButton.classList.add('btn-danger');
+    //                 delButton.textContent = 'Delete'
+    //                 delForm.action = 'admin/delete?userId=' + id
+    //                 modalInputNickname.readOnly = true
+    //                 modalInputNickname.style.backgroundColor = 'lightgrey'
+    //                 modalInputFirstName.readOnly = true
+    //                 modalInputFirstName.style.backgroundColor = 'lightgrey'
+    //                 modalInputLastName.readOnly = true
+    //                 modalInputLastName.style.backgroundColor = 'lightgrey'
+    //                 modalInputeMail.readOnly = true
+    //                 modalInputeMail.style.backgroundColor = 'lightgrey'
+    //
+    //                 fetch('/api/users', {
+    //                     method: 'post',
+    //                     credentials: 'include',
+    //                     headers: {
+    //                         "Content-type": "application/x-www-form-urlencoded; charset=UTF-8"
+    //                     },
+    //                 })
+    //                     .then((response) => response.json())
+    //                     .then(function (users) {
+    //                         let usersTable = document.getElementById('specificTable'); // поск таблицы
+    //                         usersTable.querySelector('tbody').innerHTML = ''; // ее очистка
+    //                         for (let i = 0; i < users.length; i++) {
+    //                             // POPULATE SELECT ELEMENT WITH JSON.
+    //                             usersTable.innerHTML = select.innerHTML +
+    //                                 '<option value="' + data[i]['trimName'] + '">' + data[i]['trimName'] + '</option>';
+    //                         }
+    //
+    //                     })
+    //                     .catch(function (error) {
+    //                         console.log('Request failed', error);
+    //                     });
+    //
+    //                 let select = editModal.querySelector('#roles')  // заглушка. По хорошему надо запросить асинхронно роли пользователя
+    //                 select.innerHTML = select.innerHTML +
+    //                     '<option value="ADMIN">ADMIN</option>'
+    //                 select.innerHTML = select.innerHTML +
+    //                     '<option value="ADMIN">USER</option>'   // заглушка. По хорошему надо запросить асинхронно роли пользователя
+    //                 select.readOnly = true
+    //                 select.style.backgroundColor = 'lightgrey'
+    //             }
+    //         } else {
+    //
+    //             fetch('/api/roles', {
+    //                 method: 'post',
+    //                 credentials: 'include',
+    //                 headers: {
+    //                     "Content-type": "application/x-www-form-urlencoded; charset=UTF-8"
+    //                 },
+    //             })
+    //                 .then((response) => response.json())
+    //                 .then(function (data) {
+    //                     let select = editModal.querySelector('#roles');
+    //                     for (let i = 0; i < data.length; i++) {
+    //                         // POPULATE SELECT ELEMENT WITH JSON.
+    //                         select.innerHTML = select.innerHTML +
+    //                             '<option value="' + data[i]['trimName'] + '">' + data[i]['trimName'] + '</option>';
+    //                     }
+    //
+    //                 })
+    //                 .catch(function (error) {
+    //                     console.log('Request failed', error);
+    //                 });
+    //
+    //             if (inpPassword.hasAttribute('hidden')) {
+    //                 inpPassword.removeAttribute('hidden')
+    //             }
+    //             if (delButton.classList.contains('btn-danger')) {
+    //                 delButton.classList.remove('btn-danger');
+    //                 delButton.classList.add('btn-primary');
+    //                 delButton.textContent = 'Edit'
+    //                 delForm.action = 'admin/edit?userId=' + id
+    //             }
+    //         }
+    //     })
+    // }
 </script>
 
 </body>
