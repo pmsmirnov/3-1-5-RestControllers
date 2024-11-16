@@ -9,14 +9,13 @@ import java.util.Set;
 
 public class UserDTO {
 
-    final static String defaultPassword = "password";
+    private String defaultPassword = "password";
     private int id;
     private String nick;
     private String firstName;
     private String lastName;
     private String eMail;
     private List<String> rolesList;
-    private String password;
 
     public UserDTO() {
 
@@ -28,28 +27,6 @@ public class UserDTO {
         lastName = user.getLastName();
         eMail = user.geteMail();
         rolesList = user.getRoles().stream().map(Role::getTrimName).toList();
-        password = defaultPassword;
-    }
-
-    public static User userDTOToUser (UserDTO userDTO, Set<Role> roleSet, String password) {
-        User user = new User();
-        user.setNickName(userDTO.getNick());
-        user.setFirstName(userDTO.getFirstName());
-        user.setLastName(userDTO.getLastName());
-        user.seteMail(userDTO.geteMail());
-        user.setPasswd(password);
-        user.setRoles(roleSet);
-        return user;
-    }
-
-    public static User updateUser (UserDTO userDTO, User user, Set<Role> roleSet, String password) {
-        user.setNickName(userDTO.getNick());
-        user.setFirstName(userDTO.getFirstName());
-        user.setLastName(userDTO.getLastName());
-        user.seteMail(userDTO.geteMail());
-        user.setPasswd(password);
-        user.setRoles(roleSet);
-        return user;
     }
 
     public List<String> getRolesList() {
@@ -77,7 +54,7 @@ public class UserDTO {
     }
 
     public String getPassword() {
-        return password;
+        return defaultPassword;
     }
 
     public void setRolesList(List<String> rolesList) {
@@ -106,7 +83,7 @@ public class UserDTO {
 
 
     public void setPassword(String password) {
-        this.password = password;
+        this.defaultPassword = password;
     }
 
     @Override
@@ -118,7 +95,7 @@ public class UserDTO {
                 ", lastName='" + lastName + '\'' +
                 ", eMail='" + eMail + '\'' +
                 ", rolesList=" + rolesList +
-                ", password='" + password + '\'' +
+                ", password='" + defaultPassword + '\'' +
                 '}';
     }
 }

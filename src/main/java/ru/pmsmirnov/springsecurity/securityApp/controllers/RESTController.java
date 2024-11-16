@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import ru.pmsmirnov.springsecurity.securityApp.dto.UserDTO;
+import ru.pmsmirnov.springsecurity.securityApp.mapper.UserMapper;
 import ru.pmsmirnov.springsecurity.securityApp.models.Role;
 import ru.pmsmirnov.springsecurity.securityApp.models.User;
 import ru.pmsmirnov.springsecurity.securityApp.services.RoleService;
@@ -57,9 +58,8 @@ public class RESTController {
     public void add(@RequestBody UserDTO userDTO) {
         Set<Role> rolesSet = userDTO.getRolesList().stream().map(r -> "ROLE_" + r)
                 .map(roleService::getRoleByName).collect(Collectors.toSet());
-
-        User newUser = UserDTO.userDTOToUser(userDTO, rolesSet, passwordEncoder.encode(userDTO.getPassword()));
-        System.out.println(newUser);
+        User newUser = new User();
+        UserMapper.userDTOToUser(userDTO, newUser, rolesSet, passwordEncoder.encode(userDTO.getPassword()));
         userService.add(newUser);
     }
 
@@ -70,7 +70,7 @@ public class RESTController {
         rolesSet.addAll(userDTO.getRolesList().stream().map(r -> "ROLE_" + r)
                 .map(roleService::getRoleByName).filter(r -> !rolesSet.contains(r)).collect(Collectors.toSet()));
         User editUser = userService.getUserById(userDTO.getId());
-        UserDTO.updateUser(userDTO, editUser, rolesSet, passwordEncoder.encode(userDTO.getPassword()));
+        UserMapper.userDTOToUser(userDTO, editUser, rolesSet, passwordEncoder.encode(userDTO.getPassword()));
         userService.update(editUser);
     }
 
@@ -89,7 +89,7 @@ public class RESTController {
         UserDetails userDetails =  (UserDetails)auth.getPrincipal();
         String userName = userDetails.getUsername();
         User user = userService.getCrudUserByName(userName);
-        return new UserDTO(user);
+        return UserMapper.userToUserDTO(user);
     }
 
 }

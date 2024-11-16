@@ -8,30 +8,17 @@ import java.util.Set;
 
 public class UserMapper {
 
-    public static User userDTOToUser (UserDTO userDTO, Set<Role> roleSet, String password) {
-        User user = new User();
+    public static void userDTOToUser(UserDTO userDTO, User user, Set<Role> roleSet, String password) {
         user.setNickName(userDTO.getNick());
         user.setFirstName(userDTO.getFirstName());
         user.setLastName(userDTO.getLastName());
         user.seteMail(userDTO.geteMail());
         user.setPasswd(password);
         user.setRoles(roleSet);
-        return user;
     }
 
-    public static User userDTOToUser (UserDTO userDTO, User user, Set<Role> roleSet, String password) {
-        user.setNickName(userDTO.getNick());
-        user.setFirstName(userDTO.getFirstName());
-        user.setLastName(userDTO.getLastName());
-        user.seteMail(userDTO.geteMail());
-        user.setPasswd(password);
-        user.setRoles(roleSet);
-        return user;
-    }
-
-    public static UserDTO userToUserDTO () {
-
-        return null;
+    public static UserDTO userToUserDTO(User user) {
+        return new UserDTO(user);
     }
 
 }
