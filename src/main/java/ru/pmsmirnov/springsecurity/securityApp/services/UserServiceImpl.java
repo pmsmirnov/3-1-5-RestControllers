@@ -5,13 +5,17 @@ import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.pmsmirnov.springsecurity.securityApp.dao.CrudUserDao;
+import ru.pmsmirnov.springsecurity.securityApp.models.Role;
 import ru.pmsmirnov.springsecurity.securityApp.models.User;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -63,20 +67,9 @@ public class UserServiceImpl implements UserService {
         userDao.delete(user);
     }
 
-    @Transactional (readOnly = true)
+    @Transactional(readOnly = true)
     public User getCrudUserByName(String nick) {
         return userDao.findByNickName(nick).get();
-    }
-
-    @PostConstruct
-    public void putDataInDbOnStart() {
-        userDao.cleanAllTables();
-        userDao.addUserOnStart("Админ", "Админов", "admin@mail.ru",
-                "$2a$04$ukUu2nPrwbR0SSVezzGGt.kIlAfDYJLQNubKR9/6fdSB/5StPZvF2", // пароль 123
-                "admin", "ROLE_ADMIN");
-        userDao.addUserOnStart("Юзер", "Юзеров", "user@mail.ru",
-                "$2a$04$ukUu2nPrwbR0SSVezzGGt.kIlAfDYJLQNubKR9/6fdSB/5StPZvF2",   //пароль 123
-                "user", "ROLE_USER");
     }
 
 }
