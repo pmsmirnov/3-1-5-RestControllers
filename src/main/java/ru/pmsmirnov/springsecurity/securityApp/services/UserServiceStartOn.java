@@ -42,18 +42,10 @@ public class UserServiceStartOn {
         userDao.addUserOnStart("API", "API", "api@mail.ru",
                 startPassword,   //пароль 123
                 "api", "ROLE_API");
-        User user = new User();
-        user.setFirstName("useradmin");
-        user.setLastName("useradmin");
-        user.setNickName("useradmin");
-        user.seteMail("useradmin@mail.ru");
-        user.setPasswd(startPassword);
         Set<Role> rolesSet = new HashSet<>();
         rolesSet.add(roleService.getRoleByName("ROLE_ADMIN"));
         rolesSet.add(roleService.getRoleByName("ROLE_USER"));
-        user.setRoles(rolesSet);
-        userDao.save(user);
+        userDao.save(new User("useradmin","useradmin","useradmin", "useradmin@mail.ru", startPassword, rolesSet));
     }
-
 
 }

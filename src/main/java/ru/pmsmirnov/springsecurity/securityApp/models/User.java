@@ -57,9 +57,8 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(int id, String nickName, String firstName, String lastName,
+    public User(String nickName, String firstName, String lastName,
                 String eMail, String passwd, Set<Role> roles) {
-        this.id = id;
         this.nickName = nickName;
         this.firstName = firstName;
         this.lastName = lastName;
