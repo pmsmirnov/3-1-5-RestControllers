@@ -57,7 +57,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/user").hasAnyRole("USER", "ADMIN", "API")
-                        .requestMatchers("/api/**").permitAll()
+                        .requestMatchers("/api/**").hasAnyRole("USER", "ADMIN", "API")
                         .anyRequest().authenticated())
                 .formLogin(formLogin -> formLogin.successHandler(authSuccessHandler())
                         .permitAll())
