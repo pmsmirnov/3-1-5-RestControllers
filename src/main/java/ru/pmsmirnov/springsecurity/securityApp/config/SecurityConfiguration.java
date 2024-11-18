@@ -22,12 +22,6 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 public class SecurityConfiguration {
 
 
-    @PostConstruct
-    public void init() {
-        // Код инициализации
-        System.out.println("@PostConstruct called");
-    }
-
     private final UserDetailsService userDetailsService;
 
     @Autowired
