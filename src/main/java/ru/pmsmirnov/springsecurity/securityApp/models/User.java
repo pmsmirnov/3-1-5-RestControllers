@@ -11,8 +11,18 @@ import java.util.Collection;
 import java.util.Set;
 
 @Entity
-
 @Table(name = "crud_users")
+
+@NamedStoredProcedureQuery(name = "addUser",
+        procedureName = "addUser", parameters = {
+        @StoredProcedureParameter(mode = ParameterMode.IN, name = "firstName", type = String.class),
+        @StoredProcedureParameter(mode = ParameterMode.IN, name = "lastName", type = String.class),
+        @StoredProcedureParameter(mode = ParameterMode.IN, name = "eMail", type = String.class),
+        @StoredProcedureParameter(mode = ParameterMode.IN, name = "password", type = String.class),
+        @StoredProcedureParameter(mode = ParameterMode.IN, name = "nickNameIn", type = String.class),
+        @StoredProcedureParameter(mode = ParameterMode.IN, name = "roleOfUser", type = String.class)
+})
+
 public class User implements UserDetails {
 
     @Id

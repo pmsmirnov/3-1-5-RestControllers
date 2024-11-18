@@ -1,5 +1,6 @@
 package ru.pmsmirnov.springsecurity.securityApp.services;
 
+import jakarta.annotation.PostConstruct;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -65,6 +66,17 @@ public class UserServiceImpl implements UserService {
     @Transactional (readOnly = true)
     public User getCrudUserByName(String nick) {
         return userDao.findByNickName(nick).get();
+    }
+
+    @PostConstruct
+    public void putDataInDbOnStart() {
+        userDao.cleanAllTables();
+        userDao.addUserOnStart("Админ", "Админов", "admin@mail.ru",
+                "$2a$04$ukUu2nPrwbR0SSVezzGGt.kIlAfDYJLQNubKR9/6fdSB/5StPZvF2", // пароль 123
+                "admin", "ROLE_ADMIN");
+        userDao.addUserOnStart("Юзер", "Юзеров", "user@mail.ru",
+                "$2a$04$ukUu2nPrwbR0SSVezzGGt.kIlAfDYJLQNubKR9/6fdSB/5StPZvF2",   //пароль 123
+                "user", "ROLE_USER");
     }
 
 }
