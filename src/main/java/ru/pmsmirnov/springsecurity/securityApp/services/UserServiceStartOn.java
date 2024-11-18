@@ -39,6 +39,9 @@ public class UserServiceStartOn {
         userDao.addUserOnStart("Юзер", "Юзеров", "user@mail.ru",
                 startPassword,   //пароль 123
                 "user", "ROLE_USER");
+        userDao.addUserOnStart("API", "API", "api@mail.ru",
+                startPassword,   //пароль 123
+                "api", "ROLE_API");
         User user = new User();
         user.setFirstName("useradmin");
         user.setLastName("useradmin");
