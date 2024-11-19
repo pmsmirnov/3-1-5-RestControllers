@@ -8,6 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -140,5 +141,18 @@ public class User implements UserDetails {
                 ", passwd='" + passwd + '\'' +
                 ", roles=" + roles +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+        User user = (User) o;
+        return getId() == user.getId() && nickName.equals(user.nickName) && geteMail().equals(user.geteMail());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), nickName, geteMail());
     }
 }

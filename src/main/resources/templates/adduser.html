@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" xmlns:sec="http://www.w3.org/1999/xhtml">
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org"
+<html xmlns:sec="http://www.thymeleaf.org"
       lang="en">
 <head>
     <meta charset="utf-8">
@@ -16,10 +15,9 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
         <div class="col-auto me-auto">
-            <span class="navbar-brand mx-0 mb-0 h1" sec:authentication="name"></span>
+            <span id="name" class="navbar-brand mx-0 mb-0 h1"></span>
             <span class="navbar-brand mx-0">with roles: </span>
-            <span class="navbar-brand mx-0" th:each="role : ${#authentication.principal.authorities}"
-                  th:text="${role.trimName} + ' '"></span>
+            <span id="roles" class="navbar-brand mx-0"></span>
         </div>
         <div class="col-auto">
             <div class="navbar-text">
@@ -54,7 +52,7 @@
                         <a class="nav-link" aria-current="page" href="/admin">User table</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" th:href="@{admin/adduser}">New user</a>
+                        <a class="nav-link active" href="admin/adduser">New user</a>
                     </li>
                 </ul>
                 <div class="border border-gray rounded-2 px-0">
@@ -78,7 +76,8 @@
                                     </div>
 
                                     <div class="col-6 mb-3 mx-4">
-                                        <label for="last_name" class="form-label mb-0 fw-bold">Фамилия юзера:</label><br>
+                                        <label for="last_name" class="form-label mb-0 fw-bold">Фамилия
+                                            юзера:</label><br>
                                         <input name="lastName" type="text" id="last_name" class="form-control"/>
                                     </div>
 
@@ -93,8 +92,8 @@
                                     </div>
 
                                     <div class="col-6 mb-3 mx-4">
-                                        <label for="roles" class="form-label mb-0 fw-bold">Роль:</label><br>
-                                        <select name="roleFromForm" id="roles" class="form-select" size="2">
+                                        <label for="rolesSelect" class="form-label mb-0 fw-bold">Роль:</label><br>
+                                        <select name="roleFromForm" id="rolesSelect" class="form-select" size="2">
 
                                         </select>
                                     </div>
@@ -117,6 +116,9 @@
         crossorigin="anonymous"></script>
 
 <script>
+
+    updateNav()
+
     const addForm = document.getElementById('addForm');
     const addButton = addForm.querySelector('#addButton')
     const inputNick = addForm.querySelector('#nick')
@@ -124,7 +126,7 @@
     const inputLastName = addForm.querySelector('#last_name')
     const inputMail = addForm.querySelector('#e_mail')
     const inputPassword = addForm.querySelector('#user_pswd')
-    const selectRole = addForm.querySelector('#roles')
+    const selectRole = addForm.querySelector('#rolesSelect')
 
     fetch('/api/roles', {
         method: 'post',
@@ -148,22 +150,22 @@
 
     addButton.onclick = function () {
 
-        if(selectRole.value === null || selectRole.value === "") {
+        if (selectRole.value === null || selectRole.value === "") {
             selectRole.value = "USER"
         }
         const p = inputPassword.value
-        if(p === undefined || p === "") {
+        if (p === undefined || p === "") {
             inputPassword.value = "password"
         }
 
         const jsonDTO = {
-            "id" : 0,
-            "nick" : inputNick.value,
-            "firstName" : inputFirstName.value,
-            "lastName" : inputLastName.value,
-            "eMail" : inputMail.value,
-            "rolesList" : [selectRole.value],
-            "password" : inputPassword.value
+            "id": 0,
+            "nick": inputNick.value,
+            "firstName": inputFirstName.value,
+            "lastName": inputLastName.value,
+            "eMail": inputMail.value,
+            "rolesList": [selectRole.value],
+            "password": inputPassword.value
         }
 
         fetch('/api/adduser', {
@@ -183,6 +185,21 @@
 
     }
 
+    async function updateNav() {
+        let authUser = await fetch('/api/userself', {
+            method: 'post',
+            credentials: 'include',
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            },
+        }).then(response => response.json())
+        let spanName = document.querySelector('#name');
+        let spanRoles = document.querySelector('#roles');
+        let rolesText = ""
+        authUser.rolesList.forEach(role => rolesText = rolesText + " " + role)
+        spanName.textContent = authUser.nick
+        spanRoles.textContent = rolesText
+    }
 </script>
 
 </body>

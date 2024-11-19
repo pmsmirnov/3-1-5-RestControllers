@@ -32,29 +32,29 @@ public class RESTController {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @ResponseBody
-    @PostMapping("/roles")
+
+    @PostMapping(value = "/roles", produces = "application/json")
     public List<Role> roleList() {
         return roleService.listRoles();
     }
 
 
-    @ResponseBody
-    @PostMapping("/users")
+
+    @PostMapping(value ="/users", produces = "application/json")
     public List<UserDTO> userList() {
         List<User> userList = userService.listUsers();
         return userList.stream().map(UserDTO::new).collect(Collectors.toList());
     }
 
-    @ResponseBody
+
     @PostMapping(value = "/user", consumes = "application/json", produces = "application/json")
     public UserDTO userById(@RequestBody Map<String, Integer> userId) {
         User user = userService.getUserById(userId.get("userId"));
         return new UserDTO(user);
     }
 
-    @ResponseBody
-    @PostMapping(value = "/adduser", consumes = "application/json", produces = "application/json")
+
+    @PostMapping(value = "/adduser", consumes = "application/json")
     public void add(@RequestBody UserDTO userDTO) {
         Set<Role> rolesSet = userDTO.getRolesList().stream().map(r -> "ROLE_" + r)
                 .map(roleService::getRoleByName).collect(Collectors.toSet());
@@ -63,7 +63,6 @@ public class RESTController {
         userService.add(newUser);
     }
 
-    @ResponseBody
     @PostMapping(value = "/edit", consumes = "application/json", produces = "application/json")
     public void edit(@RequestBody UserDTO userDTO) {
         Set<Role> rolesSet = userService.getUserById(userDTO.getId()).getRoles();
@@ -74,15 +73,15 @@ public class RESTController {
         userService.update(editUser);
     }
 
-    @ResponseBody
-    @PostMapping(value = "/delete", consumes = "application/json", produces = "application/json")
+
+    @PostMapping(value = "/delete", consumes = "application/json")
     public void delete(@RequestBody UserDTO userDTO) {
 
         User deletedUser = userService.getUserById(userDTO.getId());
         userService.deleteUser(deletedUser);
     }
 
-    @ResponseBody
+
     @PostMapping(value = "/userself", produces = "application/json")
     public UserDTO userSelf() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

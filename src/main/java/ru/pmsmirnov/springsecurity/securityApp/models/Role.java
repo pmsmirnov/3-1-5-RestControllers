@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -60,5 +61,18 @@ public class Role implements GrantedAuthority {
                 "id=" + id +
                 ", roleName='" + roleName + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Role)) return false;
+        Role role = (Role) o;
+        return getId() == role.getId() && getRoleName().equals(role.getRoleName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getRoleName());
     }
 }

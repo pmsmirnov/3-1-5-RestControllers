@@ -2,7 +2,7 @@ package ru.pmsmirnov.springsecurity.securityApp.services;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.pmsmirnov.springsecurity.securityApp.dao.CrudRoleDao;
+import ru.pmsmirnov.springsecurity.securityApp.repository.CrudRoleRepo;
 import ru.pmsmirnov.springsecurity.securityApp.models.Role;
 
 import java.util.List;
@@ -10,9 +10,9 @@ import java.util.List;
 @Service
 public class RoleServiceImpl implements RoleService {
 
-    private final CrudRoleDao roleDao;
+    private final CrudRoleRepo roleDao;
 
-    public RoleServiceImpl(CrudRoleDao role) {
+    public RoleServiceImpl(CrudRoleRepo role) {
         this.roleDao = role;
     }
 

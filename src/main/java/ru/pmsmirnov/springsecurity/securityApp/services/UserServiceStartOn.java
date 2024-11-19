@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import ru.pmsmirnov.springsecurity.securityApp.dao.CrudUserDao;
+import ru.pmsmirnov.springsecurity.securityApp.repository.CrudUserRepo;
 import ru.pmsmirnov.springsecurity.securityApp.models.Role;
 import ru.pmsmirnov.springsecurity.securityApp.models.User;
 
@@ -14,7 +14,7 @@ import java.util.Set;
 
 @Service
 public class UserServiceStartOn {
-    private final CrudUserDao userDao;
+    private final CrudUserRepo userDao;
 
     private final RoleService roleService;
 
@@ -22,7 +22,7 @@ public class UserServiceStartOn {
 
 
     @Autowired
-    public UserServiceStartOn(CrudUserDao userDao, RoleService roleService, ApplicationContext context) {
+    public UserServiceStartOn(CrudUserRepo userDao, RoleService roleService, ApplicationContext context) {
 
         this.userDao = userDao;
         this.roleService = roleService;

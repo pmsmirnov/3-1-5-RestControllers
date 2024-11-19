@@ -1,28 +1,23 @@
 package ru.pmsmirnov.springsecurity.securityApp.services;
 
-import jakarta.annotation.PostConstruct;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.pmsmirnov.springsecurity.securityApp.dao.CrudUserDao;
-import ru.pmsmirnov.springsecurity.securityApp.models.Role;
+import ru.pmsmirnov.springsecurity.securityApp.repository.CrudUserRepo;
 import ru.pmsmirnov.springsecurity.securityApp.models.User;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 public class UserServiceImpl implements UserService {
-    private final CrudUserDao userDao;
+    private final CrudUserRepo userDao;
 
     @Autowired
-    public UserServiceImpl(CrudUserDao userDao) {
+    public UserServiceImpl(CrudUserRepo userDao) {
         this.userDao = userDao;
     }
 

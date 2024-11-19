@@ -4,7 +4,6 @@ import ru.pmsmirnov.springsecurity.securityApp.models.Role;
 import ru.pmsmirnov.springsecurity.securityApp.models.User;
 
 import java.util.List;
-import java.util.Set;
 
 
 public class UserDTO {
