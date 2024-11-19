@@ -91,4 +91,17 @@ public class RESTController {
         return UserMapper.userToUserDTO(user);
     }
 
+
+    @GetMapping(value = "/userself", produces = "application/json") //для проверки что отдается для неаутентифицированного пользователя
+    public UserDTO userSelfGet() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth.getPrincipal().equals("anonymousUser")) {
+            return UserMapper.GetAnonymousUserDTO();
+        }
+        UserDetails userDetails =  (UserDetails)auth.getPrincipal();
+        String userName = userDetails.getUsername();
+        User user = userService.getCrudUserByName(userName);
+        return UserMapper.userToUserDTO(user);
+    }
+
 }

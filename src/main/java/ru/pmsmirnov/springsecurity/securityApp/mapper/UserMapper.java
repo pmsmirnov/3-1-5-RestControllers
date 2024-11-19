@@ -21,4 +21,13 @@ public class UserMapper {
         return new UserDTO(user);
     }
 
+    public static UserDTO GetAnonymousUserDTO() {
+        UserDTO anonymousUserDTO = new UserDTO();
+        anonymousUserDTO.setNick("anonymousUser");
+        return anonymousUserDTO;
+    }
+
+
 }
+
+
