@@ -2,7 +2,9 @@ const adminPanel = document.getElementById("admin")
 const userPanel = document.getElementById("user")
 const addingPage = document.getElementById("adduser")
 
-window.onload = () => {start()}
+window.onload = async () => {
+    await start()
+}
 
 async function start() {
 
@@ -197,21 +199,21 @@ async function updateTableAndNavOfUser() {
 
 const editModal = document.getElementById('editModalTemplate');
 if (editModal) {
-    editModal.addEventListener('show.bs.modal', event => {
+    editModal.addEventListener('show.bs.modal', async event => {
         const button = event.relatedTarget
         const id = button.getAttribute('data-id')
         const promiseUserDTO = getUser(id)
-        editingEditModal(promiseUserDTO)
+        await editingEditModal(promiseUserDTO)
     })
 }
 
 const deleteModal = document.getElementById('deleteModalTemplate');
 if (deleteModal) {
-    deleteModal.addEventListener('show.bs.modal', event => {
+    deleteModal.addEventListener('show.bs.modal', async event => {
         const button = event.relatedTarget
         const id = button.getAttribute('data-id')
         const promiseUserDTO = getUser(id)
-        editingDeleteModal(promiseUserDTO)
+        await editingDeleteModal(promiseUserDTO)
     })
 }
 
@@ -344,8 +346,6 @@ async function editingEditModal(promiseUser) {
             }
         })
 }
-
-const selectRole = addForm.querySelector('#rolesSelect')
 
 async function showAddUser() {
     userPanel.style.display = 'none';
