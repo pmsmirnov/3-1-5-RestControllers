@@ -152,13 +152,7 @@ async function updateTableAndNavOfUser() {
     while (tBody.rows.length) {
         tBody.deleteRow(0);
     }
-    let user = await fetch('/api/userself', {
-        method: 'post',
-        credentials: 'include',
-        headers: {
-            "Content-type": "application/json; charset=UTF-8"
-        },
-    }).then(response => response.json())
+    let user = await getAuthUser()
 
     let row = tBody.insertRow()
 
